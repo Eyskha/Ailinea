@@ -9,11 +9,12 @@ namespace Ailinea.PrefixPatches
     [HarmonyPatch]
     internal class PrefixPatchTestExecution
     {
-        private static List<string> NUnitTestAttributes = new List<string>
+        private static List<string> TestAttributes = new List<string>
         {
             "NUnit.Framework.TestAttribute",
             "NUnit.Framework.TestCaseAttribute",
             "NUnit.Framework.TestCaseSourceAttribute",
+            "UnityEngine.TestTools.UnityTestAttribute"
         };
         private static int NbTestsExecuted = 0;
 
@@ -21,7 +22,7 @@ namespace Ailinea.PrefixPatches
         /// Get the methods to patch:
         /// <list type="bullet">
         ///     <item>The test method in <see cref="AilineaMod.TestTargets"/> if specified</item>
-        ///     <item>By default, methods with one of the <see cref="NUnitTestAttributes"/> in the
+        ///     <item>By default, methods with one of the <see cref="TestAttributes"/> in the
         ///     test assembly whose path is specified in <see cref="AilineaMod.TestTargets"/></item>
         /// </list>
         /// </summary>
@@ -33,7 +34,7 @@ namespace Ailinea.PrefixPatches
                 return AccessTools.GetTypesFromAssembly(Assembly.LoadFrom(AilineaMod.TestTargets.PathTestAssembly))
                                                                 .SelectMany(type => type.GetMethods())
                                                                 .Where(method => method.GetCustomAttributes(true)
-                                                                                       .Where(attribute => NUnitTestAttributes.Contains(attribute.ToString()))
+                                                                                       .Where(attribute => TestAttributes.Contains(attribute.ToString()))
                                                                                        .Count() > 0);
             }
             else if (AilineaMod.TestTargets.TestType != null && AilineaMod.TestTargets.TestNameMethod != null)
